@@ -8,5 +8,6 @@
         <!-- Formato para agregar clases del modelo, no se que tan necesario -->
         <!-- <class>model.Actor</class> -->
         <class>model.Admin</class>
+        <class>model.Film</class>
     </persistence-unit>
 </persistence>
