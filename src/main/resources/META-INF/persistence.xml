@@ -2,8 +2,8 @@
 <persistence version="2.1"
              xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    <persistence-unit name="sakilaPU" transaction-type="JTA">
-        <jta-data-source>jdbc/feelmsPU</jta-data-source>
+    <persistence-unit name="feelmsPU" transaction-type="JTA">
+        <jta-data-source>jdbc/feelms</jta-data-source>
         <!-- recordar cambiar los sakila y sakilaPU a lo que usemos, si es necesario -->
         <!-- Formato para agregar clases del modelo, no se que tan necesario -->
         <!-- <class>model.Actor</class> -->
