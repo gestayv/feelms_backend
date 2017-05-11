@@ -2,6 +2,7 @@ package ejb;
 
 import facade.AbstractFacade;
 import facade.TweetCountFacade;
+import json.RankJson;
 import json.TopTweetsJson;
 import model.TweetCount;
 
@@ -35,14 +36,14 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
 
 
     @Override
-    public List<TopTweetsJson> findTop(int amount, int days) {
+    public List<RankJson> findTop(int amount, int days) {
         LocalDate dateEnd = LocalDate.now().minusDays(1);
         LocalDate dateBegin = dateEnd.minusDays(days);
         Date formatedDateBegin = Date.from(dateBegin.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date formatedDateEnd = Date.from(dateEnd.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 
-
+        /*
         TypedQuery<TopTweetsJson> query = em.createQuery("" +
                 "SELECT NEW json.TopTweetsJson(f.id, f.title, SUM(t.count))" +
                 "FROM Film f JOIN f.tweetCounts t WHERE t.date BETWEEN :dateBegin AND :dateEnd GROUP BY f.id ORDER BY SUM(t.count) DESC",
@@ -54,13 +55,8 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
 
         List<TopTweetsJson> topTweetsJsons = query.getResultList();
 
-        int size = topTweetsJsons.size();
+        */
 
-        for(int i = 0; i < size; i++) {
-            topTweetsJsons.get(i).setId(i);
-        }
-
-        /*
         Query query = em.createQuery("" +
                         "SELECT f.id, f.title, SUM(t.count)" +
                         "FROM Film f JOIN f.tweetCounts t WHERE t.date BETWEEN :dateBegin AND :dateEnd GROUP BY f.id ORDER BY SUM(t.count) DESC",
@@ -70,9 +66,17 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
         query.setParameter("dateBegin", formatedDateBegin, TemporalType.DATE);
         query.setParameter("dateEnd", formatedDateEnd, TemporalType.DATE);
 
-        List<Object[]> objects = query.getResultList();
-        */
+        query.setMaxResults(amount);
 
-        return topTweetsJsons;
+        List<Object[]> objects = query.getResultList();
+
+        List<RankJson> rank = new ArrayList<RankJson>();
+
+        for(Object[] obj: objects) {
+            RankJson r = new RankJson((int) obj[0], (String) obj[1], (Long) obj[2]);
+            rank.add(r);
+        }
+
+        return rank;
     }
 }

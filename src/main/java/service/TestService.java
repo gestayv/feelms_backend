@@ -90,26 +90,19 @@ public class TestService {
         return filmJsons;
     }
 
-
+    /* Queda en registro esta basura
     @GET
     @Path("/top/{amount}/days/{days}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TopTweetsJson> getTopTweets(@PathParam("amount") int amount, @PathParam("days") int days) {
 
-        List<TopTweetsJson> result = null;
+        List<TopTweetsJson> result = tweetCountFacadeEJB.findTop(amount, days);
 
-        try {
-            result = tweetCountFacadeEJB.findTop(amount, days);
-            logger.log(Level.INFO, "Ejecuto bien teoricamente WOAH YEAH!");
-
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage());
-        }
-
+        logger.log(Level.INFO, "Ejecuto bien teoricamente WOAH YEAH!");
 
         String msg = "";
         for(TopTweetsJson top: result) {
-            msg = msg + "{ " + top.getId() + " " + top.getFilmId() + " " + top.getFilmTitle() +
+            msg = msg + "{ " + top.getFilmId() + " " + top.getFilmTitle() +
                     " " + top.getTweetCount() + " } ";
         }
 
@@ -118,30 +111,14 @@ public class TestService {
 
         return  result;
     }
+    */
+
 
     @GET
-    @Path("/top")
+    @Path("/top/{amount}/days/{days}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<RankJson> getRank() {
-
-        List<TopTweetsJson> result = tweetCountFacadeEJB.findTop(3, 7);
-        logger.log(Level.INFO, "Ejecuto bien teoricamente WOAH YEAH!");
-
-        String msg = "";
-        for(TopTweetsJson top: result) {
-            msg = msg + "{ " + top.getId() + " " + top.getFilmId() + " " + top.getFilmTitle() +
-                    " " + top.getTweetCount() + " } ";
-        }
-
-        logger.log(Level.INFO, msg);
-        logger.log(Level.INFO, "Transformando!!?!?!?");
-
-        List<RankJson> rank = new ArrayList<RankJson>();
-        for(TopTweetsJson top: result) {
-            rank.add(RankJson.createJson(top));
-        }
-
-        return rank;
+    public List<RankJson> getTop(@PathParam("amount") int amount, @PathParam("days") int days) {
+        return tweetCountFacadeEJB.findTop(amount, days);
     }
 
 

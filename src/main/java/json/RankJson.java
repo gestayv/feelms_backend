@@ -13,15 +13,25 @@ public class RankJson implements Serializable {
 
     private int tweetCount;
 
+    public RankJson() {
+
+    }
+
+    public RankJson(int filmId, String filmTitle, Long tweetCount) {
+        this.filmTitle = filmTitle;
+        this.filmId = filmId;
+        this.tweetCount = tweetCount.intValue();
+    }
 
     public static RankJson createJson(TopTweetsJson top) {
         RankJson rank = new RankJson();
         rank.filmId = top.getFilmId();
         rank.filmTitle = top.getFilmTitle();
-        rank.tweetCount = top.getTweetCount().intValue();
+        rank.tweetCount = top.getTweetCount();
 
         return rank;
     }
+
 
     public int getFilmId() {
         return filmId;

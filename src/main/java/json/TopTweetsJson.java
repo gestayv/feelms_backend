@@ -7,27 +7,17 @@ import java.io.Serializable;
  */
 public class TopTweetsJson implements Serializable {
 
-    private int id;
-
     private int filmId;
 
     private String filmTitle;
 
-    private Long tweetCount;
+    private int tweetCount;
 
 
     public TopTweetsJson(int film_id, String film_title, Long tweet_count) {
         this.filmId = film_id;
         this.filmTitle = film_title;
-        this.tweetCount = tweet_count;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.tweetCount = tweet_count.intValue();
     }
 
     public int getFilmId() {
@@ -46,11 +36,11 @@ public class TopTweetsJson implements Serializable {
         this.filmTitle = filmTitle;
     }
 
-    public Long getTweetCount() {
+    public int getTweetCount() {
         return tweetCount;
     }
 
-    public void setTweetCount(Long tweetCount) {
+    public void setTweetCount(int tweetCount) {
         this.tweetCount = tweetCount;
     }
 }
