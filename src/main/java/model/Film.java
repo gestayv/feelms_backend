@@ -47,6 +47,9 @@ public class Film implements Serializable {
     @Column(name = "trailer", length = 100)
     private String trailer;
 
+    @OneToMany(mappedBy = "film")
+    private List<TweetCount> tweetCounts;
+
 
     //Getter and setters
 
@@ -129,5 +132,14 @@ public class Film implements Serializable {
 
     public void setTrailer(String trailer) {
         this.trailer = trailer;
+    }
+
+
+    public List<TweetCount> getTweetCounts() {
+        return tweetCounts;
+    }
+
+    public void setTweetCounts(List<TweetCount> tweetCounts) {
+        this.tweetCounts = tweetCounts;
     }
 }

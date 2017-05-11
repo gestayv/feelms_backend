@@ -9,5 +9,8 @@
         <!-- <class>model.Actor</class> -->
         <class>model.Admin</class>
         <class>model.Film</class>
+        <class>model.Director</class>
+        <class>model.Genre</class>
+        <class>model.TweetCount</class>
     </persistence-unit>
 </persistence>

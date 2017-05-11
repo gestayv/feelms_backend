@@ -2,8 +2,10 @@ package service;
 
 import facade.AdminFacade;
 import facade.FilmFacade;
+import facade.TweetCountFacade;
 import json.AdminJson;
 import json.FilmJson;
+import json.TopTweetsJson;
 import model.Admin;
 import model.Film;
 
@@ -14,6 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -28,6 +31,9 @@ public class TestService {
 
     @EJB
     FilmFacade filmFacadeEJB;
+
+    @EJB
+    TweetCountFacade tweetCountFacadeEJB;
 
     Logger logger = Logger.getLogger(TestService.class.getName());
 
@@ -81,6 +87,31 @@ public class TestService {
         return filmJsons;
     }
 
+    @GET
+    @Path("/top/{amount}/days/{days}")
+    @Produces({"application/xml", "application/json"})
+    public List<TopTweetsJson> getTopTweets(@PathParam("amount") int amount, @PathParam("days") int days) {
+        List<TopTweetsJson> result = null;
+
+        try {
+            result = tweetCountFacadeEJB.findTop(amount, days);
+            logger.log(Level.INFO, "Ejecuto bien teoricamente WOAH YEAH!");
+
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+
+
+        String msg = "";
+        for(TopTweetsJson top: result) {
+            msg = msg + "{ " + top.getId() + " " + top.getFilmId() + " " + top.getFilmTitle() +
+                    " " + top.getTweetCount() + " } ";
+        }
+
+        logger.log(Level.INFO, msg);
+
+        return result;
+    }
 
 
 
