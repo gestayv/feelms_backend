@@ -14,6 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -75,6 +76,7 @@ public class TestService {
     }
 
 
+
     @GET
     @Path("/films")
     @Produces({"application/xml", "application/json"})
@@ -87,10 +89,12 @@ public class TestService {
         return filmJsons;
     }
 
+
     @GET
     @Path("/top/{amount}/days/{days}")
-    @Produces({"application/xml", "application/json"})
+    @Produces(MediaType.APPLICATION_JSON)
     public List<TopTweetsJson> getTopTweets(@PathParam("amount") int amount, @PathParam("days") int days) {
+
         List<TopTweetsJson> result = null;
 
         try {
@@ -109,10 +113,10 @@ public class TestService {
         }
 
         logger.log(Level.INFO, msg);
+        logger.log(Level.INFO, "What!!?!?!?");
 
-        return result;
+        return  result;
     }
-
 
 
 }

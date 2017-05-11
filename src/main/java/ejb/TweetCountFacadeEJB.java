@@ -42,16 +42,12 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
         Date formatedDateEnd = Date.from(dateEnd.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 
+
         TypedQuery<TopTweetsJson> query = em.createQuery("" +
                 "SELECT NEW json.TopTweetsJson(f.id, f.title, SUM(t.count))" +
                 "FROM Film f JOIN f.tweetCounts t WHERE t.date BETWEEN :dateBegin AND :dateEnd GROUP BY f.id ORDER BY SUM(t.count) DESC",
                 TopTweetsJson.class
         );
-
-        /*
-        query.setParameter("dateBegin", "\'" + dateBegin.format(DateTimeFormatter.ISO_LOCAL_DATE) + "\'");
-        query.setParameter("dateEnd", "\'" + dateEnd.format(DateTimeFormatter.ISO_LOCAL_DATE) + "\'");
-        */
 
         query.setParameter("dateBegin", formatedDateBegin, TemporalType.DATE);
         query.setParameter("dateEnd", formatedDateEnd, TemporalType.DATE);
@@ -75,13 +71,6 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
         query.setParameter("dateEnd", formatedDateEnd, TemporalType.DATE);
 
         List<Object[]> objects = query.getResultList();
-
-        List<TopTweetsJson> topTweetsJsons = new ArrayList<TopTweetsJson>();
-
-        for(Object[] obj: objects) {
-            topTweetsJsons.add(new TopTweetsJson((int) obj[0], (String) obj[1], (Long) obj[2]));
-        }
-
         */
 
         return topTweetsJsons;
