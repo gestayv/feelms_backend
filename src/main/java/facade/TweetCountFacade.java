@@ -1,5 +1,6 @@
 package facade;
 
+import json.CountJson;
 import json.RankJson;
 import json.TopTweetsJson;
 import model.TweetCount;
@@ -31,4 +32,6 @@ public interface TweetCountFacade {
     //Especial para Ranking
     public List<RankJson> findTop(int amount, int days);
 
+    //Especial para tomar listado de conteos en un rango de dias
+    public List<CountJson> findCount(int filmId, int days);
 }

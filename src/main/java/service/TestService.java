@@ -3,10 +3,7 @@ package service;
 import facade.AdminFacade;
 import facade.FilmFacade;
 import facade.TweetCountFacade;
-import json.AdminJson;
-import json.FilmJson;
-import json.RankJson;
-import json.TopTweetsJson;
+import json.*;
 import model.Admin;
 import model.Film;
 
@@ -119,6 +116,13 @@ public class TestService {
     @Produces(MediaType.APPLICATION_JSON)
     public List<RankJson> getTop(@PathParam("amount") int amount, @PathParam("days") int days) {
         return tweetCountFacadeEJB.findTop(amount, days);
+    }
+
+    @GET
+    @Path("/films/{film_id}/tweets/count/{days}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<CountJson> getCount(@PathParam("film_id") int filmId, @PathParam("days") int days) {
+        return tweetCountFacadeEJB.findCount(filmId, days);
     }
 
 
