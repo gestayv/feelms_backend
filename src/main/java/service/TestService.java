@@ -5,6 +5,7 @@ import facade.FilmFacade;
 import facade.TweetCountFacade;
 import json.AdminJson;
 import json.FilmJson;
+import json.RankJson;
 import json.TopTweetsJson;
 import model.Admin;
 import model.Film;
@@ -117,6 +118,32 @@ public class TestService {
 
         return  result;
     }
+
+    @GET
+    @Path("/top")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<RankJson> getRank() {
+
+        List<TopTweetsJson> result = tweetCountFacadeEJB.findTop(3, 7);
+        logger.log(Level.INFO, "Ejecuto bien teoricamente WOAH YEAH!");
+
+        String msg = "";
+        for(TopTweetsJson top: result) {
+            msg = msg + "{ " + top.getId() + " " + top.getFilmId() + " " + top.getFilmTitle() +
+                    " " + top.getTweetCount() + " } ";
+        }
+
+        logger.log(Level.INFO, msg);
+        logger.log(Level.INFO, "Transformando!!?!?!?");
+
+        List<RankJson> rank = new ArrayList<RankJson>();
+        for(TopTweetsJson top: result) {
+            rank.add(RankJson.createJson(top));
+        }
+
+        return rank;
+    }
+
 
 
 }
