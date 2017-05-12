@@ -2,7 +2,6 @@ package facade;
 
 import json.CountJson;
 import json.RankJson;
-import json.TopTweetsJson;
 import model.TweetCount;
 
 import javax.ejb.Local;

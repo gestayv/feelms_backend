@@ -4,14 +4,12 @@ import facade.AbstractFacade;
 import facade.TweetCountFacade;
 import json.CountJson;
 import json.RankJson;
-import json.TopTweetsJson;
 import model.TweetCount;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,21 +40,6 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
         LocalDate dateBegin = dateEnd.minusDays(days - 1);
         Date formatedDateBegin = Date.from(dateBegin.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date formatedDateEnd = Date.from(dateEnd.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-
-        /*
-        TypedQuery<TopTweetsJson> query = em.createQuery("" +
-                "SELECT NEW json.TopTweetsJson(f.id, f.title, SUM(t.count))" +
-                "FROM Film f JOIN f.tweetCounts t WHERE t.date BETWEEN :dateBegin AND :dateEnd GROUP BY f.id ORDER BY SUM(t.count) DESC",
-                TopTweetsJson.class
-        );
-
-        query.setParameter("dateBegin", formatedDateBegin, TemporalType.DATE);
-        query.setParameter("dateEnd", formatedDateEnd, TemporalType.DATE);
-
-        List<TopTweetsJson> topTweetsJsons = query.getResultList();
-
-        */
 
         Query query = em.createQuery("" +
                         "SELECT f.id, f.title, SUM(t.count)" +
