@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 @Path("/test")
 public class TestService {
 
+    /*
+
     @EJB
     AdminFacade adminFacadeEJB;
 
@@ -87,29 +89,6 @@ public class TestService {
         return filmJsons;
     }
 
-    /* Queda en registro esta basura
-    @GET
-    @Path("/top/{amount}/days/{days}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<TopTweetsJson> getTopTweets(@PathParam("amount") int amount, @PathParam("days") int days) {
-
-        List<TopTweetsJson> result = tweetCountFacadeEJB.findTop(amount, days);
-
-        logger.log(Level.INFO, "Ejecuto bien teoricamente WOAH YEAH!");
-
-        String msg = "";
-        for(TopTweetsJson top: result) {
-            msg = msg + "{ " + top.getFilmId() + " " + top.getFilmTitle() +
-                    " " + top.getTweetCount() + " } ";
-        }
-
-        logger.log(Level.INFO, msg);
-        logger.log(Level.INFO, "What!!?!?!?");
-
-        return  result;
-    }
-    */
-
 
     @GET
     @Path("/top/{amount}/days/{days}")
@@ -125,6 +104,6 @@ public class TestService {
         return tweetCountFacadeEJB.findCount(filmId, days);
     }
 
-
+    */
 
 }
