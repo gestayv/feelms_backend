@@ -26,5 +26,7 @@ public interface FilmFacade {
 
     public int count();
 
+    public List<Film> findList(List<Integer> list);
+
 
 }

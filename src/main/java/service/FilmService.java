@@ -29,7 +29,7 @@ public class FilmService {
     @EJB
     TweetCountFacade tweetCountFacadeEJB;
 
-    Logger logger = Logger.getLogger(TestService.class.getName());
+    Logger logger = Logger.getLogger(FilmService.class.getName());
 
     //Obtiene todos los films
     @GET
