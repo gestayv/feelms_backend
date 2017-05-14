@@ -1,5 +1,6 @@
 package service;
 
+import ejb.*;
 import facade.AdminFacade;
 import facade.DirectorFacade;
 import facade.FilmFacade;
@@ -14,14 +15,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ejb.AdminFacadeEJB;
-import ejb.FilmFacadeEJB;
-import ejb.DirectorFacadeEJB;
-import ejb.GenreFacadeEJB;
 import facade.KeyTermFacade;
 
 import json.NewFilmJson;
@@ -51,6 +50,13 @@ public class AdminService {
     
     @EJB
     KeyTermFacade keyTermFacadeEJB;
+
+    //Arturo: Agregado para actualizar el buscador al ingresar la pelicula
+    @EJB
+    SearcherEJB searcherEJB;
+
+    //Arturo: logger para registrar cosas
+    Logger logger = Logger.getLogger(AdminService.class.getName());
     
     @POST
     @Path("/add/film")
@@ -107,7 +113,15 @@ public class AdminService {
                 filmFacadeEJB.edit(filmUpdate);
                 genreFacadeEJB.edit(g);
             }
-            
+
+            //Arturo: Para agregar la pelicula al buscador sin tener que reiniciar
+            //Supondre filmUpdate es la pelicula que se acaba de agregar
+            try {
+                searcherEJB.addToIndex(filmUpdate);
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, e.getMessage());
+            }
+
             //  Utilizo la misma película para el caso de las keywords
             //  Por ahora se pueden repetir, arreglar para sprint 2.
             List<KeyTerm> keyTerms = new ArrayList<KeyTerm>();
