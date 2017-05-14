@@ -37,6 +37,10 @@ public class Film implements Serializable {
     @ManyToOne
     @JoinColumn(name="director_id")
     private Director director;
+    
+    @ManyToOne
+    @JoinColumn(name="admin_id")
+    private Admin admin;
 
     @ManyToMany(mappedBy = "films")
     private List<Genre> genres;
@@ -50,8 +54,27 @@ public class Film implements Serializable {
     @OneToMany(mappedBy = "film")
     private List<TweetCount> tweetCounts;
 
+    @OneToMany
+    @JoinColumn(name= "film_id", referencedColumnName = "id")
+    private List<KeyTerm> films;
 
     //Getter and setters
+
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
+
+    public List<KeyTerm> getFilms() {
+        return films;
+    }
+
+    public void setFilms(List<KeyTerm> films) {
+        this.films = films;
+    }
 
 
     public int getId() {

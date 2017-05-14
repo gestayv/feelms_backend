@@ -12,5 +12,6 @@
         <class>model.Director</class>
         <class>model.Genre</class>
         <class>model.TweetCount</class>
+        <class>model.KeyTerm</class>
     </persistence-unit>
 </persistence>
