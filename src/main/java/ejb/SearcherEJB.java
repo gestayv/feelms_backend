@@ -16,9 +16,7 @@ import org.apache.lucene.store.RAMDirectory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
@@ -32,6 +30,7 @@ import java.util.logging.Logger;
  * Created by arturo on 13-05-17.
  */
 
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Startup
 @Singleton
 public class SearcherEJB {
@@ -88,6 +87,7 @@ public class SearcherEJB {
         return this.msg;
     }
 
+    @Lock(LockType.WRITE)
     private int start() throws IOException {
 
         int numIndex = 0;
@@ -144,6 +144,7 @@ public class SearcherEJB {
         return numIndex;
     }
 
+    @Lock(LockType.WRITE)
     public void addToIndex(Film film) throws IOException {
 
         try {
@@ -186,6 +187,7 @@ public class SearcherEJB {
 
     }
 
+    @Lock(LockType.READ)
     public List<Integer> searchIndex(String queryStr, int maxHits) throws IOException {
 
         if(status && ramDirectory != null) {
