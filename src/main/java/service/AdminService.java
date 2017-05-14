@@ -53,7 +53,7 @@ public class AdminService {
     KeyTermFacade keyTermFacadeEJB;
     
     @POST
-    @Path("/{admin_id}/add/film")
+    @Path("/add/film")
     @Consumes({"application/xml", "application/json"})
     public void addFilm(NewFilmJson film)
     {
@@ -119,4 +119,24 @@ public class AdminService {
             }
         }
     }
+    /* 
+    Recibe los nuevos datos de la película
+    Reemplazo los datos por los que trae el json y hago un update.
+    @POST
+    @Path("/update/film")
+    @Consumes({"application/xml", "application/json"})
+    public void updateFilm(NewFilmJson film)
+    {
+        //  Recibo el json, busco película por id
+    }
+    
+    Recibe la id de la película
+    debería borrar en este orden: keyword, genre, film
+    @GET
+    @PathParam("/delete/film/{film_id}")
+    public void deleteFilm()
+    {
+        
+    }
+    */
 }
