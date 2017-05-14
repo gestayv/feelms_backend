@@ -20,12 +20,24 @@ public class Genre implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name="admin_id")
+    private Admin admin;    
+    
     @ManyToMany
     @JoinTable(name = "film_has_genre",
     joinColumns = @JoinColumn(name = "genre_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "film_id", referencedColumnName = "id"))
     private List<Film> films;
 
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
+    
     public int getId() {
         return id;
     }

@@ -38,6 +38,8 @@ public class Admin implements Serializable {
     @JoinColumn(name = "admin_id", referencedColumnName = "id")
     private List<Genre> genres;
 
+    
+    
     public int getId() {
         return id;
     }
