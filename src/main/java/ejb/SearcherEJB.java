@@ -120,20 +120,70 @@ public class SearcherEJB {
 
             numIndex = indexWriter.maxDoc();
 
+            this.indexWriter.commit();
+
             this.status = true;
         } catch (IOException e) {
 
             this.ramDirectory = null;
             numIndex = -1;
 
-            throw e;
-        } finally {
             if (this.indexWriter != null && this.indexWriter.isOpen()) {
-                this.indexWriter.close();
+                try {
+                    this.indexWriter.close();
+                } catch (IOException ex) {
+                    throw ex;
+                } finally {
+                    this.indexWriter = null;
+                }
             }
+
+            throw e;
         }
 
         return numIndex;
+    }
+
+    public void addToIndex(Film film) throws IOException {
+
+        try {
+            if(this.indexWriter == null || !this.indexWriter.isOpen()) {
+                if(this.analyzer == null) {
+                    this.analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
+                }
+                IndexWriterConfig indexconfig = new IndexWriterConfig(analyzer);
+                indexconfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+
+                if(this.ramDirectory == null) {
+                    this.ramDirectory = new RAMDirectory();
+                }
+
+                this.indexWriter = new IndexWriter(ramDirectory, indexconfig);
+            }
+
+            Document doc = new Document();
+
+            doc.add(new StoredField("film_id", film.getId()));
+            if(film.getOriginalTitle() != null) {
+                doc.add(new TextField("original_title", film.getOriginalTitle(), Field.Store.NO));
+            }
+            doc.add(new TextField("title", film.getTitle(), Field.Store.NO));
+            indexWriter.addDocument(doc);
+
+            indexWriter.commit();
+
+        } catch (IOException e) {
+            if (this.indexWriter != null && this.indexWriter.isOpen()) {
+                try {
+                    this.indexWriter.close();
+                } catch (IOException ex) {
+                    this.indexWriter = null;
+                    throw ex;
+                }
+            }
+            throw e;
+        }
+
     }
 
     public List<Integer> searchIndex(String queryStr, int maxHits) throws IOException {
