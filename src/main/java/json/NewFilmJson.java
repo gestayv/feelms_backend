@@ -23,7 +23,7 @@ public class NewFilmJson {
 
     private String originalTitle;
 
-    private Date releaseDate;
+    private String releaseDate;
 
     private int length;
 
@@ -67,11 +67,11 @@ public class NewFilmJson {
         this.originalTitle = originalTitle;
     }
 
-    public Date getReleaseDate() {
+    public String getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
 

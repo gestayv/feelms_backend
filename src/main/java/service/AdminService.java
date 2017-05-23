@@ -16,7 +16,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,9 +70,13 @@ public class AdminService {
         updateFilm.setTitle(film.getTitle());
         updateFilm.setOriginalTitle(film.getOriginalTitle());
         updateFilm.setLength(film.getLength());
-        updateFilm.setReleaseDate(film.getReleaseDate());
+        try {
+            updateFilm.setReleaseDate((new SimpleDateFormat("yyyy-MM-dd")).parse(film.getReleaseDate()));
+        } catch (ParseException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
         updateFilm.setSynopsis(film.getSynopsis());
-        updateFilm.setImgId(film.getImgId());
+        //updateFilm.setImgId(film.getImgId());
         updateFilm.setTrailer(film.getTrailer());
         
         //  Comparar keywords, generos, admins y directores antiguos y nuevos,
@@ -88,9 +95,19 @@ public class AdminService {
         newFilm.setTitle(film.getTitle());
         newFilm.setOriginalTitle(film.getOriginalTitle());
         newFilm.setLength(film.getLength());
-        newFilm.setReleaseDate(film.getReleaseDate());
+        try {
+            newFilm.setReleaseDate((new SimpleDateFormat("yyyy-MM-dd")).parse(film.getReleaseDate()));
+        } catch (ParseException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
+        //newFilm.setReleaseDate(film.getReleaseDate());
         newFilm.setSynopsis(film.getSynopsis());
-        newFilm.setImgId(film.getImgId());
+        //Arturo: Por mientras ignoremos las imagenes ya que debemos
+        //generar el id aleatoreamente y que sea unico.
+        //Hay que cambiar en el JSON de newFilm el get ImgId por
+        //algo tipo booleano, para verificar si sube imagen o no.
+        newFilm.setImgId(null);
+        //newFilm.setImgId(film.getImgId());
         newFilm.setTrailer(film.getTrailer());
         
         // Buscar: Director, genero, admin. 
@@ -138,8 +155,9 @@ public class AdminService {
             //Supondre filmUpdate es la pelicula que se acaba de agregar
             try {
                 searcherEJB.addToIndex(filmUpdate);
+                logger.log(Level.INFO, "Added film: " + filmUpdate.getTitle());
             } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage());
+                logger.log(Level.SEVERE, "Error al agregar Film al buscador: " + e.getMessage());
             }
 
             //  Utilizo la misma película para el caso de las keywords
