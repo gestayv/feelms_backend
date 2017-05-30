@@ -56,7 +56,7 @@ public class Film implements Serializable {
 
     @OneToMany
     @JoinColumn(name= "film_id", referencedColumnName = "id")
-    private List<KeyTerm> films;
+    private List<KeyTerm> keyterms;
 
     //Getter and setters
 
@@ -68,14 +68,13 @@ public class Film implements Serializable {
         this.admin = admin;
     }
 
-    public List<KeyTerm> getFilms() {
-        return films;
+    public List<KeyTerm> getKeyTerms() {
+        return keyterms;
     }
 
-    public void setFilms(List<KeyTerm> films) {
-        this.films = films;
+    public void setKeyTerms(List<KeyTerm> keyterms) {
+        this.keyterms = keyterms;
     }
-
 
     public int getId() {
         return id;

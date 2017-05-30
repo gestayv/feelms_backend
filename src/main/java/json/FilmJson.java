@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import model.KeyTerm;
 
 /**
  * Created by arturo on 10-05-17.
@@ -34,18 +35,28 @@ public class FilmJson implements Serializable{
     private String imgId;
 
     private String trailer;
+    
+    private List<KeyTermJson> keyterms = null;
 
     public static FilmJson createJson(Film film) {
         FilmJson filmJson = FilmJson.createPartialJson(film);
         filmJson.director = DirectorJson.createPartialJson(film.getDirector());
-
+        
+        filmJson.keyterms = new ArrayList<KeyTermJson>();
+        List<KeyTerm> keytermM = film.getKeyTerms();
+        for(KeyTerm kt : keytermM)
+        {
+            System.out.println("Id: "+kt.getId()+" Term:"+kt.getTerm()+" Film: "+kt.getFilm().getTitle());
+            filmJson.keyterms.add(KeyTermJson.createPartialJson(kt));
+        }
+        
         filmJson.genres = new ArrayList<GenreJson>();
         List<Genre> genreOrg = film.getGenres();
 
         for(Genre genre: genreOrg) {
             filmJson.genres.add(GenreJson.createPartialJson(genre));
         }
-
+        
         return filmJson;
     }
 
@@ -144,4 +155,14 @@ public class FilmJson implements Serializable{
     public void setTrailer(String trailer) {
         this.trailer = trailer;
     }
+
+    public List<KeyTermJson> getKeyterms() {
+        return keyterms;
+    }
+
+    public void setKeyterms(List<KeyTermJson> keyterms) {
+        this.keyterms = keyterms;
+    }
+    
+    
 }

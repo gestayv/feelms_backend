@@ -61,5 +61,7 @@ public class FilmService {
     public List<CountJson> getCount(@PathParam("film_id") int filmId, @PathParam("days") int days) {
         return tweetCountFacadeEJB.findCount(filmId, days);
     }
+    
+    
 
 }
