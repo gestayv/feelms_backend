@@ -79,9 +79,183 @@ public class AdminService {
         //updateFilm.setImgId(film.getImgId());
         updateFilm.setTrailer(film.getTrailer());
         
-        //  Comparar keywords, generos, admins y directores antiguos y nuevos,
+        Director dir = directorFacadeEJB.find(film.getDirector());
+        Admin admin = adminFacadeEJB.find(film.getAdmin());
+        
+        updateFilm.setDirector(dir);
+        updateFilm.setAdmin(admin);
+        
+        //  Comparar keywords, generos antiguos y nuevos,
         //  si no coinciden, hago un update.
         
+        //  Comparación de genres
+        List<Genre> genres = new ArrayList<>();
+        for(int g : film.getGenres())
+        {
+            Genre genre = genreFacadeEJB.find(g);
+            if(!updateFilm.getGenres().contains(genre))
+            {
+                genres.add(genre);
+            }
+        }
+        
+/*======  Esta parte del código es horriblemente sobrecomplicada pero funcional ====*/
+        //  Entero para indicar si el elemento se encuentra o no.
+        int found = 0;
+        //  Se crean listas:
+        //  Una lista con todos los géneros correspondientes a los valores a ser actualizados
+        List<Genre> nueva = new ArrayList<>();
+        for(int id : film.getGenres())
+        {
+            nueva.add(genreFacadeEJB.find(id));
+        }
+        //  Una lista con todos los géneros previos al update.
+        List<Genre> original = updateFilm.getGenres();
+        
+        //  Una lista con los valores que se deben eliminar y los que se deben agregar.
+        List<Genre> delG = new ArrayList<>();
+        List<Genre> addG = new ArrayList<>();
+        
+        //  Comparo los géneros originales y los géneros nuevos
+        for (Genre go : original) {
+            //  Por cada género original comparo con los nuevos
+            for(Genre gn : nueva)
+            {
+                if(go.getId() == gn.getId())
+                {
+                    found = 1;
+                }
+            }
+            //  Si no está en los nuevos, lo agrego a la lista de eliminación
+            if(found == 0)
+            {
+                delG.add(go);
+            }
+            found = 0;
+        }
+        
+        //  Comparo los géneros nuevos con los originales
+        for (Genre gn : nueva) {
+            //  Por cada nuevo lo busco en los originales
+            for(Genre go : original)
+            {
+                if(gn.getId() == go.getId())
+                {
+                    found = 1;
+                }
+            }
+            //  Si no está en los originales lo agrego a la lista de añadir.
+            if(found == 0)
+            {
+                addG.add(gn);
+            }
+            found = 0;
+        }
+        
+        found = 0;
+        int pos = 0;
+        //  Hago los updates necesarios en film_has_genre por medio del ejb de género
+        if(delG.size() > 0)
+        {
+            for(Genre g : delG)
+            {
+                Genre modify = genreFacadeEJB.find(g.getId());
+                List<Film> films = modify.getFilms();
+                for(Film f : films)
+                {
+                    if(f.getId() == updateFilm.getId())
+                    {
+                        break;
+                    }
+                    pos++;
+                }
+                films.remove(pos);
+                modify.setFilms(films);
+                filmFacadeEJB.edit(updateFilm);
+                genreFacadeEJB.edit(modify);
+                pos = 0;
+            }
+        }
+        if(addG.size() > 0)
+        {
+            for(Genre g : addG)
+            {
+                Genre modify = genreFacadeEJB.find(g.getId());
+                List<Film> films = modify.getFilms();
+                films.add(updateFilm);
+                modify.setFilms(films);
+                filmFacadeEJB.edit(updateFilm);
+                genreFacadeEJB.edit(modify);
+            }
+        }
+        
+        //  Comparación de keywords
+        found = 0;
+        List<KeyTerm> delK = new ArrayList<>();
+        List<KeyTerm> addK = new ArrayList<>();
+        List<KeyTerm> originalK = updateFilm.getKeyTerms();
+        List<KeyTerm> listaFinal = new ArrayList<>();
+        //  Buscar en todos los kt originales...
+        for(KeyTerm kt : originalK)
+        {
+            for(String s : film.getKeywords())
+            {
+                if(kt.getTerm().equals(s))
+                {
+                    found = 1;
+                    listaFinal.add(kt);
+                    break;
+                }
+            }
+            if(found != 1)
+            {
+                delK.add(kt);
+            }
+            found = 0;
+        }
+        
+        for(String s : film.getKeywords())
+        {
+            for(KeyTerm kt : originalK)
+            {
+                if(s.equals(kt.getTerm()))
+                {
+                    found = 1;
+                    break;
+                }
+            }
+            if(found != 1)
+            {
+                KeyTerm keyT = new KeyTerm();
+                keyT.setTerm(s);
+                keyT.setFilm(updateFilm);
+                addK.add(keyT);
+            }
+            found = 0;
+        }
+        
+        if(!delK.isEmpty())
+        {
+            for(KeyTerm kt : delK)
+            {
+                keyTermFacadeEJB.remove(kt);
+            }
+        }
+        
+        if(!addK.isEmpty())
+        {
+            for(KeyTerm kt : addK)
+            {
+                keyTermFacadeEJB.create(kt);
+                int largo = keyTermFacadeEJB.findAll().size();
+                KeyTerm keyT = keyTermFacadeEJB.findAll().get(largo - 1);
+                listaFinal.add(keyT);
+            }
+        }
+        
+/*==== Aquí termina la parte horriblemente sobrecomplicada =====*/
+        updateFilm.setGenres(genres);
+        updateFilm.setKeyTerms(listaFinal);
         filmFacadeEJB.edit(updateFilm);
     }
     
