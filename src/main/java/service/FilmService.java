@@ -1,10 +1,12 @@
 package service;
 
+import com.sun.javafx.geom.Edge;
+import ejb.Neo4jEJB;
 import facade.FilmFacade;
 import facade.TweetCountFacade;
-import json.CountJson;
-import json.FilmJson;
+import json.*;
 import model.Film;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
@@ -16,6 +18,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -30,6 +33,9 @@ public class FilmService {
 
     @EJB
     TweetCountFacade tweetCountFacadeEJB;
+
+    @EJB
+    Neo4jEJB neo4jEJB;
 
     Logger logger = Logger.getLogger(FilmService.class.getName());
 
@@ -60,6 +66,34 @@ public class FilmService {
     @Produces({MediaType.APPLICATION_JSON})
     public List<CountJson> getCount(@PathParam("film_id") int filmId, @PathParam("days") int days) {
         return tweetCountFacadeEJB.findCount(filmId, days);
+    }
+
+    //Obtiene la informacion del grafo para las ids de peliculas dadas
+    //FORMATO EJ: /films/graph/1&2&4....&24/from/7
+    //(Toma toda la lista de numeros separados por & y busca los que twittearon los ultimos X dias)
+    @GET
+    @Path("/graph/{film_ids}/from/{days}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public GraphJson getGraph(@PathParam("film_ids") String filmIds, @PathParam("days") int days) {
+        String[] strIds = filmIds.trim().split("&");
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        for (String strid: strIds) {
+            if(StringUtils.isNumeric(strid)) {
+                int val = Integer.parseInt(strid);
+                if(!ids.contains(val)) {
+                    ids.add(val);
+                }
+            }
+        }
+
+        if(!ids.isEmpty() && days > 0) {
+            GraphJson g = neo4jEJB.getGraph(ids, days);
+            logger.log(Level.INFO, "Sending Graph Json: " + g.getNodes().size() + " " + g.getLinks().size());
+
+            return g;
+        } else {
+            return null;
+        }
     }
     
     
