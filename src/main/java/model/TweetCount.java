@@ -23,6 +23,12 @@ public class TweetCount implements Serializable {
     @Column(name = "count", nullable = false)
     private int count;
 
+    @Column(name = "pos", nullable = false)
+    private int pos;
+
+    @Column(name = "neg", nullable = false)
+    private int neg;
+
     @ManyToOne
     @JoinColumn(name = "film_id")
     private Film film;
@@ -57,5 +63,21 @@ public class TweetCount implements Serializable {
 
     public void setFilm(Film film) {
         this.film = film;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
+    }
+
+    public int getNeg() {
+        return neg;
+    }
+
+    public void setNeg(int neg) {
+        this.neg = neg;
     }
 }
