@@ -2,6 +2,7 @@ package ejb;
 
 import facade.AbstractFacade;
 import facade.TweetCountFacade;
+import java.math.BigDecimal;
 import json.CountJson;
 import json.RankJson;
 import json.SentimentJson;
@@ -124,6 +125,49 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
 
         return null;
     }
+    
+    @Override
+    public List<RankJson> findGenre(int amount, int days) {
+        LocalDate dateEnd = LocalDate.now().minusDays(1);
+        LocalDate dateBegin = dateEnd.minusDays(days - 1);
+        Date formatedDateBegin = Date.from(dateBegin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date formatedDateEnd = Date.from(dateEnd.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
+        Query query = em.createNativeQuery(
+                "SELECT conteo.genre_id, conteo.name, SUM(conteo.count) as tweets\n" +
+                "FROM \n" +
+                    "(SELECT date, count, genre_id, genre_films.name\n" +
+                    "FROM tweet_counts tc\n" +
+                    "JOIN\n" +
+                        "(SELECT genre_id, film_id, name\n" +
+                        "FROM genres g JOIN film_has_genre fg\n" +
+                        "WHERE g.id = fg.genre_id\n" +
+                        "GROUP BY genre_id, film_id, name) as genre_films\n" +
+                    "WHERE tc.film_id = genre_films.film_id\n" +
+                    "AND tc.date BETWEEN ?1 AND ?2 \n" +
+                    "GROUP BY date, count, genre_id, genre_films.name) as conteo\n" +
+                "GROUP BY conteo.genre_id\n" +
+                "ORDER BY tweets DESC LIMIT ?3");
+        
+        
+        
+        query.setParameter(1, formatedDateBegin, TemporalType.DATE);
+        query.setParameter(2, formatedDateEnd, TemporalType.DATE);
+        query.setParameter(3, amount);
+       
+        List<Object[]> objects = query.getResultList();
+       
+        List<RankJson> rank = new ArrayList<>();
+       
+        for(Object[] obj : objects)
+        {
+            int id = ((Long)obj[0]).intValue();
+            String name = (String) obj[1];
+            long count = ((BigDecimal)obj[2]).longValueExact();
+            rank.add(new RankJson(id, name, count));
+        }
+       
+        return rank;
+    }
 
 }

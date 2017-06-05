@@ -30,5 +30,12 @@ public class RankingService {
     public List<RankJson> getTop(@PathParam("amount") int amount, @PathParam("days") int days) {
         return tweetCountFacadeEJB.findTop(amount, days);
     }
-
+    
+    @GET
+    @Path("/genres/{amount}/days/{days}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<RankJson> getTopGenre(@PathParam("amount") int amount, @PathParam("days") int days) 
+    {
+        return tweetCountFacadeEJB.findGenre(amount, days);
+    }
 }

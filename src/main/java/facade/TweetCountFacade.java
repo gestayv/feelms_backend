@@ -36,4 +36,6 @@ public interface TweetCountFacade {
     public List<CountJson> findCount(int filmId, int days);
 
     public SentimentJson findSentiment(int filmId, int days);
+    
+    public List<RankJson> findGenre(int amount, int days);
 }
