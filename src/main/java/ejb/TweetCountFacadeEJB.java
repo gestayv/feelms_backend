@@ -4,6 +4,7 @@ import facade.AbstractFacade;
 import facade.TweetCountFacade;
 import json.CountJson;
 import json.RankJson;
+import json.SentimentJson;
 import model.TweetCount;
 
 import javax.ejb.Stateless;
@@ -90,6 +91,38 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
         }
 
         return countJsons;
+    }
+
+    @Override
+    public SentimentJson findSentiment(int filmId, int days) {
+        LocalDate dateEnd = LocalDate.now().minusDays(1);
+        LocalDate dateBegin = dateEnd.minusDays(days - 1);
+        Date formatedDateBegin = Date.from(dateBegin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date formatedDateEnd = Date.from(dateEnd.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Query query = em.createQuery("SELECT SUM(t.count), SUM(t.pos), SUM(t.neg) " +
+                "FROM TweetCount t JOIN t.film f WHERE f.id = :id AND t.date BETWEEN :dateBegin AND :dateEnd ");
+
+        query.setParameter("id", filmId);
+        query.setParameter("dateBegin", formatedDateBegin, TemporalType.DATE);
+        query.setParameter("dateEnd", formatedDateEnd, TemporalType.DATE);
+
+        List<Object[]> objects = query.getResultList();
+
+        if(!objects.isEmpty()) {
+            Object[] obj = objects.get(0);
+
+            long count = (long) obj[0];
+            long posCount = (long) obj[1];
+            long negCount = (long) obj[2];
+
+            double pos = ((double) posCount) / count;
+            double neg = ((double) negCount) / count;
+
+            return new SentimentJson(filmId, pos, neg);
+        }
+
+        return null;
     }
 
 

@@ -2,6 +2,7 @@ package facade;
 
 import json.CountJson;
 import json.RankJson;
+import json.SentimentJson;
 import model.TweetCount;
 
 import javax.ejb.Local;
@@ -33,4 +34,6 @@ public interface TweetCountFacade {
 
     //Especial para tomar listado de conteos en un rango de dias
     public List<CountJson> findCount(int filmId, int days);
+
+    public SentimentJson findSentiment(int filmId, int days);
 }

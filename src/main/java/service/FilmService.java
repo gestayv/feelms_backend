@@ -2,6 +2,7 @@ package service;
 
 import com.sun.javafx.geom.Edge;
 import ejb.Neo4jEJB;
+import ejb.TweetCountFacadeEJB;
 import facade.FilmFacade;
 import facade.TweetCountFacade;
 import json.*;
@@ -91,6 +92,20 @@ public class FilmService {
             logger.log(Level.INFO, "Sending Graph Json: " + g.getNodes().size() + " " + g.getLinks().size());
 
             return g;
+        } else {
+            return null;
+        }
+    }
+
+    //Obtiene los porcentajes de tweets positivos y negativos para un film
+    //film_id es la id del film. Days son la cantidad de dias partiendo de ayer (1 = solo ayer)
+    //days debe ser mayor o igual a 1
+    @GET
+    @Path("/{film_id}/sentiments/{days}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public SentimentJson getSentiments(@PathParam("film_id") int filmId, @PathParam("days") int days) {
+        if(days >= 1) {
+            return tweetCountFacadeEJB.findSentiment(filmId, days);
         } else {
             return null;
         }
