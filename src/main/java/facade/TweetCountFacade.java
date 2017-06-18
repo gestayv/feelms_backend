@@ -1,6 +1,7 @@
 package facade;
 
 import json.CountJson;
+import json.MapData;
 import json.RankJson;
 import json.SentimentJson;
 import model.TweetCount;
@@ -38,4 +39,6 @@ public interface TweetCountFacade {
     public SentimentJson findSentiment(int filmId, int days);
     
     public List<RankJson> findGenre(int amount, int days);
+
+    public MapData findCountByCountry(int filmId, int days);
 }

@@ -3,18 +3,15 @@ package ejb;
 import facade.AbstractFacade;
 import facade.TweetCountFacade;
 import java.math.BigDecimal;
-import json.CountJson;
-import json.RankJson;
-import json.SentimentJson;
+
+import json.*;
 import model.TweetCount;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by arturo on 11-05-17.
@@ -168,6 +165,74 @@ public class TweetCountFacadeEJB extends AbstractFacade<TweetCount> implements T
         }
        
         return rank;
+    }
+
+    @Override
+    public MapData findCountByCountry(int filmId, int days) {
+        LocalDate dateEnd = LocalDate.now().minusDays(1);
+        LocalDate dateBegin = dateEnd.minusDays(days - 1);
+        Date formatedDateBegin = Date.from(dateBegin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date formatedDateEnd = Date.from(dateEnd.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Query query = em.createNativeQuery("SELECT twctry.country_id AS country_id, SUM(twctry.count) AS count \n" +
+                "FROM films f\n" +
+                "INNER JOIN tweet_counts twc ON f.id = twc.film_id\n" +
+                "INNER JOIN tweets_countries twctry ON twctry.tweet_count_id = twc.id\n" +
+                "WHERE f.id = ?1 AND twc.date BETWEEN ?2 AND ?3\n" +
+                "GROUP BY twctry.country_id");
+
+        query.setParameter(1, filmId);
+        query.setParameter(2, formatedDateBegin, TemporalType.DATE);
+        query.setParameter(3, formatedDateEnd, TemporalType.DATE);
+
+        List<Object[]> objects = query.getResultList();
+
+        if (objects.size() <= 0) {
+            return null;
+        }
+
+        List<Integer> range;
+        List<CountryData> countryData = new ArrayList<CountryData>();
+
+        for(Object[] objs: objects) {
+            String country_id = (String) objs[0];
+            int count = ((BigDecimal) objs[1]).intValue();
+            countryData.add(new CountryData(country_id, count));
+        }
+
+        //Empieza a calcular rangos y esas cosas
+        int max = 0;
+        for(CountryData cd: countryData) {
+            if(cd.getCount() > max) {
+                max = cd.getCount();
+            }
+        }
+
+        if(max < 5) {
+            range = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
+        } else {
+            int divisions;
+            int size = countryData.size();
+            if(size < 5) {
+                divisions = size;
+            } else if (size <= 25) {
+                divisions = 5;
+            } else {
+                divisions = ((Double) Math.sqrt((double) size)).intValue();
+            }
+
+            range = new ArrayList<Integer>();
+
+            int dec = max / divisions;
+            for(int i = 0; i < divisions; i++) {
+                range.add(max - (dec * i));
+            }
+
+            Collections.reverse(range);
+
+        }
+
+        return new MapData(range, countryData);
     }
 
 }

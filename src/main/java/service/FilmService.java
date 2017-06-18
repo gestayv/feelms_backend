@@ -110,6 +110,19 @@ public class FilmService {
             return null;
         }
     }
+
+
+    //Para obtener la informacion del mapa correspondiente para la pelicula
+    @GET
+    @Path("/{film_id}/map/{days}")
+    @Produces((MediaType.APPLICATION_JSON))
+    public MapData getMapData(@PathParam("film_id") int filmId, @PathParam("days") int days) {
+        if (days >= 1) {
+            return tweetCountFacadeEJB.findCountByCountry(filmId, days);
+        } else {
+            return null;
+        }
+    }
     
     
 
