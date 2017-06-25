@@ -13,5 +13,6 @@
         <class>model.Genre</class>
         <class>model.TweetCount</class>
         <class>model.KeyTerm</class>
+        <class>model.Subscription</class>
     </persistence-unit>
 </persistence>
