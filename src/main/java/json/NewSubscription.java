@@ -5,9 +5,9 @@ package json;
  */
 public class NewSubscription {
 
-    private String first_name;
+    private String first_name = "";
 
-    private String last_name;
+    private String last_name = "";
 
     private String mail;
 

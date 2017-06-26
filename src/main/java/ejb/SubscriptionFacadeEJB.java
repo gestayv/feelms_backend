@@ -5,8 +5,12 @@ import facade.SubscriptionFacade;
 import model.Subscription;
 
 import javax.ejb.Stateless;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Properties;
 
 /**
  * Created by Arturo on 24-06-2017.
@@ -26,5 +30,6 @@ public class SubscriptionFacadeEJB extends AbstractFacade<Subscription> implemen
     protected EntityManager getEntityManager() {
         return this.em;
     }
+
 
 }
