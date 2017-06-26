@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import facade.KeyTermFacade;
+import json.AdminJson;
 
 import json.NewFilmJson;
 import json.CountJson;
@@ -324,6 +325,16 @@ public class AdminService {
                 filmFacadeEJB.edit(filmUpdate);
                 genreFacadeEJB.edit(g);
             }
+            
+            //  Utilizo la misma película para el caso de las keywords
+            //  Por ahora se pueden repetir, arreglar para sprint 2.
+            List<KeyTerm> keyTerms = new ArrayList<KeyTerm>();
+            for (String k: film.getKeywords()) {
+                KeyTerm keyT = new KeyTerm();
+                keyT.setTerm(k);
+                keyT.setFilm(filmUpdate);
+                keyTermFacadeEJB.create(keyT);
+            }
 
             //Arturo: Para agregar la pelicula al buscador sin tener que reiniciar
             //Supondre filmUpdate es la pelicula que se acaba de agregar
@@ -334,26 +345,23 @@ public class AdminService {
                 logger.log(Level.SEVERE, "Error al agregar Film al buscador: " + e.getMessage());
             }
 
-            //  Utilizo la misma película para el caso de las keywords
-            //  Por ahora se pueden repetir, arreglar para sprint 2.
-            List<KeyTerm> keyTerms = new ArrayList<KeyTerm>();
-            for (String k: film.getKeywords()) {
-                KeyTerm keyT = new KeyTerm();
-                keyT.setTerm(k);
-                keyT.setFilm(filmUpdate);
-                keyTermFacadeEJB.create(keyT);
-            }
+            
         }
     }
-    /* 
     
-    Recibe la id de la película
-    debería borrar en este orden: keyword, genre, film
     @GET
-    @PathParam("/delete/film/{film_id}")
-    public void deleteFilm()
+    @Path("/login/{user_id}/{user_pass}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public AdminJson loginAdmin(@PathParam("user_id") String userId, @PathParam("user_pass") String userPass)
     {
+        Admin adminLogin = adminFacadeEJB.findByNameAndPass(userId, userPass);
+        AdminJson adminLoginJson = new AdminJson();
         
+        adminLoginJson.setId(adminLogin.getId());
+        adminLoginJson.setUsername(adminLogin.getUsername());
+        adminLoginJson.setFirstName(adminLogin.getFirstName());
+        adminLoginJson.setLastName(adminLogin.getLastName());
+        
+        return adminLoginJson;
     }
-    */
 }

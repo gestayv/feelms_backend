@@ -26,5 +26,5 @@ public interface AdminFacade {
 
     public int count();
 
-
+    public Admin findByNameAndPass(String name, String pass);
 }
